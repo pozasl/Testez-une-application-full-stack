@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: yoga-app
+    volumes:
+      - ../..:/workspaces:cached
+    env_file: "default.env"
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+  yoga-mysql:
+    image: mysql:lts
+    container_name: yoga-mysql
+    env_file: "default.env"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+volumes:
+  mysql-data:
