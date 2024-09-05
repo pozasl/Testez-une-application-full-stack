@@ -29,5 +29,12 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "exclude": ["cypress"]
+  "include": [
+        "src",
+        "node_modules/cypress"
+    ],
+    "exclude": [
+        "node_modules/cypress",
+        "cypress"
+    ]
 }
