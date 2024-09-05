@@ -12,6 +12,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Teacher } from 'src/app/interfaces/teacher.interface';
 import { TeacherService } from 'src/app/services/teacher.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 class MatSnackBarStub{
   open(){
@@ -71,8 +73,11 @@ describe('DetailComponent', () => {
       imports: [
         RouterTestingModule,
         HttpClientModule,
+        MatIconModule,
+        MatCardModule,
         MatSnackBarModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        
       ],
       declarations: [DetailComponent], 
       providers: [{ provide: SessionService, useValue: mockSessionService },
