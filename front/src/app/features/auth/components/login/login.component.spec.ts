@@ -28,7 +28,12 @@ describe('LoginComponent', () => {
       declarations: [LoginComponent],
       providers: [SessionService],
       imports: [
-        RouterTestingModule,
+        RouterTestingModule.withRoutes(
+          [
+            {path: 'sessions', redirectTo : '/'},
+            {path: 'login', redirectTo : '/'},
+          ]
+        ),
         BrowserAnimationsModule,
         HttpClientModule,
         MatCardModule,

@@ -12,6 +12,7 @@ import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -23,6 +24,11 @@ describe('RegisterComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [RegisterComponent],
       imports: [
+        RouterTestingModule.withRoutes(
+          [
+            {path: 'login', redirectTo : '/'},
+          ]
+        ),
         BrowserAnimationsModule,
         HttpClientModule,
         ReactiveFormsModule,  

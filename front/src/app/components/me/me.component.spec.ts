@@ -11,6 +11,7 @@ import { MeComponent } from './me.component';
 import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
 
 class MatSnackBarStub{
   open(){
@@ -50,6 +51,7 @@ describe('MeComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [MeComponent],
       imports: [
+        RouterTestingModule,
         MatSnackBarModule,
         HttpClientModule,
         MatCardModule,
