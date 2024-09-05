@@ -49,7 +49,7 @@ describe('AppComponent', () => {
     const sessionServiceSpy = jest.spyOn(sessionService, 'logOut');
     const routerSpy = jest.spyOn(router, 'navigate');
     app.logout();
-    expect(sessionServiceSpy).toHaveBeenCalled();
-    expect(routerSpy).toHaveBeenCalledWith(['']);
+    expect(sessionServiceSpy).toBeCalled();
+    expect(routerSpy).toBeCalledWith(['']);
   });
 });

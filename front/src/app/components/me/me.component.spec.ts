@@ -82,14 +82,14 @@ describe('MeComponent', () => {
 
   it('should get user Info from session at initilization', () => {
     const userServiceSpy = jest.spyOn(userService, "getById");
-    expect(userServiceSpy).toHaveBeenCalledWith("1");
+    expect(userServiceSpy).toBeCalledWith("1");
     expect(component.user).toBe(mockUser);
   });
 
   it('back should navigate back in history', () => {
     const historySpy = jest.spyOn(window.history,"back");
     component.back()
-    expect(historySpy).toHaveBeenCalled();
+    expect(historySpy).toBeCalled();
   });
 
   it('delete should delete user, notify the deletion and logout to root location', () => {
@@ -97,9 +97,9 @@ describe('MeComponent', () => {
     const snackBarSpy = jest.spyOn(snackBar, "open");
     const routerSpy = jest.spyOn(router, "navigate");
     component.delete();
-    expect(userServiceSpy).toHaveBeenCalledWith("1");
-    expect(snackBarSpy).toHaveBeenCalled();
-    expect(routerSpy).toHaveBeenCalledWith(['/']);
+    expect(userServiceSpy).toBeCalledWith("1");
+    expect(snackBarSpy).toBeCalled();
+    expect(routerSpy).toBeCalledWith(['/']);
   });
 
 });

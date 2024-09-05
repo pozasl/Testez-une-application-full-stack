@@ -102,7 +102,7 @@ describe('DetailComponent', () => {
     const sessionApiSpy = jest.spyOn(sessionApiService, "detail");
     component.ngOnInit();
     fixture.detectChanges();
-    expect(sessionApiSpy).toHaveBeenCalledWith('2');
+    expect(sessionApiSpy).toBeCalledWith('2');
     expect(component.session).toBe(session1);
     expect(component.sessionId).toBe('2');
     expect(component.teacher).toBe(teacher1);
@@ -121,23 +121,23 @@ describe('DetailComponent', () => {
     const snackBarSpy = jest.spyOn(snackBar, "open");
     const routerSpy = jest.spyOn(router, "navigate");
     component.delete();
-    expect(sessionApiSpy).toHaveBeenCalledWith('2');
-    expect(snackBarSpy).toHaveBeenCalled();
-    expect(routerSpy).toHaveBeenCalledWith(['sessions']);
+    expect(sessionApiSpy).toBeCalledWith('2');
+    expect(snackBarSpy).toBeCalled();
+    expect(routerSpy).toBeCalledWith(['sessions']);
   });
 
   it('participate should add the user to the yoga session', () => {
     sessionApiService.participate = jest.fn(()=> new Observable(obs=>obs.next()));
     const sessionApiSpy = jest.spyOn(sessionApiService, "participate");
     component.participate();
-    expect(sessionApiSpy).toHaveBeenCalledWith("2","1");
+    expect(sessionApiSpy).toBeCalledWith("2","1");
   });
 
   it('unParticipate should remove the user from the yoga session', () => {
     sessionApiService.unParticipate = jest.fn(()=> new Observable(obs=>obs.next()));
     const sessionApiSpy = jest.spyOn(sessionApiService, "unParticipate");
     component.unParticipate();
-    expect(sessionApiSpy).toHaveBeenCalledWith("2","1");
+    expect(sessionApiSpy).toBeCalledWith("2","1");
   });
 
 });
