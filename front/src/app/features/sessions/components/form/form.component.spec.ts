@@ -47,7 +47,9 @@ describe('FormComponent when not admin', () => {
     await TestBed.configureTestingModule({
 
       imports: [
-        RouterTestingModule,
+        RouterTestingModule.withRoutes(
+          [{path: 'sessions', redirectTo : '/'}],
+        ),
         HttpClientModule,
         MatCardModule,
         MatIconModule,
@@ -109,21 +111,21 @@ describe('FormComponent when admin', () => {
   }
 
   const session1 = {
-    id: 1,
-    name: "Session 9",
-    description: "Description",
+    id: '1',
+    name: 'Session 9',
+    description: 'Description',
     date: now,
-    teacher_id: 1,
+    teacher_id: '1',
     users: [],
     createdAt: now,
     updatedAt: now,
   }
 
   const formSession = {
-    name: session1.name,
-    date: session1.date.toISOString().split('T')[0],
-    teacher_id: session1.teacher_id,
-    description: session1.description
+    name: "Session 9",
+    date: now.toISOString().split('T')[0],
+    teacher_id: '1',
+    description: "Description"
   };
 
   beforeEach(async () => {
@@ -180,7 +182,7 @@ describe('FormComponent when admin', () => {
   });
 
   it('initialization should create empty session form if admin', async () => {
-    await router.navigate(['/sessions/create'])
+    await router.navigate(['sessions','create']);
     component.ngOnInit();
     fixture.detectChanges();
     expect(component.onUpdate).toBe(false)
@@ -197,7 +199,7 @@ describe('FormComponent when admin', () => {
     const sessionApiServiceSpy = jest.spyOn(sessionApiService,"create");
     const matSnackBarSpy = jest.spyOn(snackBar,"open");
     const routerSpy = jest.spyOn(router,"navigate")
-    await router.navigate(['/sessions/create']);
+    await router.navigate(['sessions','create']);
     component.ngOnInit();
     fixture.detectChanges();
     component.sessionForm?.setValue(formSession);
@@ -209,7 +211,7 @@ describe('FormComponent when admin', () => {
   });
 
   it('submit should update session if update mod then exit to /sessions', async () => {
-    sessionApiService.detail = jest.fn(() => new Observable<any>(obs => obs.next(sessionApiService)))
+    sessionApiService.detail = jest.fn(() => new Observable<any>(obs => obs.next(session1)))
     sessionApiService.update = jest.fn(() => new Observable<any>(obs => obs.next(session1)));
     const sessionApiServiceSpy = jest.spyOn(sessionApiService,"update");
     const matSnackBarSpy = jest.spyOn(snackBar,"open");
@@ -217,13 +219,22 @@ describe('FormComponent when admin', () => {
     await router.navigate(['sessions','update','1']);
     component.ngOnInit();
     fixture.detectChanges();
-    await  fixture.whenStable()
     expect(component.sessionForm?.value).toEqual(formSession);
-    expect(component.onUpdate).toBe(false)
+    expect(component.onUpdate).toBe(true)
     component.submit();
     expect(sessionApiServiceSpy).toBeCalledWith('1', formSession);
     expect(matSnackBarSpy).toBeCalledWith('Session updated !', 'Close', { duration: 3000 });
     expect(routerSpy).toBeCalledWith(['sessions']);
+  });
+
+  it('submit with undefined should ???', async () => {
+    const createSessionSpy = jest.spyOn(sessionApiService,"create");
+    const updateSessionSpy = jest.spyOn(sessionApiService,"update");
+    component.sessionForm = undefined;
+    expect(component.sessionForm).toBeUndefined();
+    component.onUpdate = false;
+    component.submit();
+    expect(createSessionSpy).toBeCalledWith(undefined);
   });
 
 });
