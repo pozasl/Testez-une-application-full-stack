@@ -10,7 +10,7 @@ import { expect } from '@jest/globals';
 
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
 describe('RegisterComponent', () => {
