@@ -20,9 +20,7 @@ describe('ListComponent', () => {
   let router: Router;
 
   const date1 = new Date(2024,7,10);
-  const date1Str = "August 10, 2024";
   const date2 = new Date(2024,7,23);
-  const date2Str = "August 23, 2024";
   const date3 = new Date(2024,8,21);
   const date3Str = "September 21, 2024";
   const sessions = [
@@ -82,7 +80,7 @@ describe('ListComponent', () => {
     });
 
     it("Create Button should be visible", () => {
-      const createBtn = fixture.nativeElement.querySelector('button');
+      const createBtn = fixture.nativeElement.querySelector('button[ng-reflect-router-link="create"]');
       expect(createBtn).not.toBeNull();
       expect(createBtn?.textContent).toContain("Create");
     });
@@ -93,8 +91,8 @@ describe('ListComponent', () => {
       expect(matCardItemElements[0].querySelector("mat-card-title")?.textContent).toContain(sessions[0].name);
       expect(matCardItemElements[0].querySelector("mat-card-subtitle")?.textContent).toContain("Session on " + date3Str);
       expect(matCardItemElements[0].querySelector("mat-card-subtitle")?.textContent).toContain("Session on " + date3Str);
-      expect(matCardItemElements[0].querySelectorAll("button")[0].textContent).toContain("Detail");
-      expect(matCardItemElements[0].querySelectorAll("button")[1].textContent).toContain("Edit");
+      expect(matCardItemElements[0].querySelector('button[ng-reflect-router-link="detail,' + sessions[0].id + '"]')?.textContent).toContain("Detail");
+      expect(matCardItemElements[0].querySelector('button[ng-reflect-router-link="update,' + sessions[0].id + '"]')?.textContent).toContain("Edit");
     });
 
   });
