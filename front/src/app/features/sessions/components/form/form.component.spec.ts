@@ -233,7 +233,7 @@ describe('FormComponent', () => {
       expect(routerSpy).toBeCalledWith(['sessions']);
     });
 
-      it('should disable Save Button when form is empty or not valid', async () => {
+    it('should disable Save Button when form is empty or not valid', async () => {
         await router.navigate(['sessions', 'create']);
         component.ngOnInit();
         fixture.detectChanges();
@@ -249,15 +249,15 @@ describe('FormComponent', () => {
         expect(saveBtn.disabled).toBe(true);
       });  
 
-      // Needed for 100% coverage
-      it('Submit with undefined should send undefined data', async () => {
-        const createSessionSpy = jest.spyOn(sessionApiService, "create");
-        component.sessionForm = undefined;
-        expect(component.sessionForm).toBeUndefined();
-        component.onUpdate = false;
-        component.submit();
-        expect(createSessionSpy).toBeCalledWith(undefined);
-      });
+    // Needed for 100% coverage
+    it('Submit with undefined should send undefined data', async () => {
+      const createSessionSpy = jest.spyOn(sessionApiService, "create");
+      component.sessionForm = undefined;
+      expect(component.sessionForm).toBeUndefined();
+      component.onUpdate = false;
+      component.submit();
+      expect(createSessionSpy).toBeCalledWith(undefined);
+    });
 
   });
 });
