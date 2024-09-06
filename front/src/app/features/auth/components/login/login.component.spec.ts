@@ -55,13 +55,54 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('submit should authenticate user', () => {
+  it('submit should call authenticate service', () => {
     const authServiceSpy = jest.spyOn(authService,"login");
     component.submit();
     expect(authServiceSpy).toBeCalled()
   });
 
-  it('sucessfull submit should login session and go to /session', () => {
+  it('submit with login failure should set onError', () => {
+    const httpError = new HttpErrorResponse({ error: 'Unhautorized', status: 401 });
+    authService.login = jest.fn(() => new Observable((obs) => obs.error(httpError)));
+    component.submit();
+    fixture.detectChanges();
+    expect(component.onError).toBe(true);
+  });
+
+  it('Submit button should be disabled when fields are empty', () => {
+    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]')
+    expect(submitBtn?.disabled).toBe(true);
+  });
+
+  it('email field should be invalid with wrong email and submit should be disabled', () => {
+    component.form.setValue({email: 'bob-test.com', password: '123456'});
+    fixture.detectChanges();
+    const emailField : HTMLFormElement | null = fixture.nativeElement.querySelector('input[ng-reflect-name="email"]');
+    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]')
+    expect(submitBtn?.disabled).toBe(true);
+    expect(emailField?.classList).toContain("ng-invalid");
+  });
+
+  it('password field should be invalid when empty and submit should be disabled', () => {
+    component.form.setValue({email: 'bob@test.com', password: ''});
+    fixture.detectChanges();
+    const passField : HTMLFormElement | null = fixture.nativeElement.querySelector('input[ng-reflect-name="password"]');
+    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]')
+    expect(submitBtn?.disabled).toBe(true);
+    expect(passField?.classList).toContain("ng-invalid");
+  });
+
+  it('Submit button should be enabled when fields are ok', () => {
+    component.form.setValue({email: 'bob@test.com', password: '123456'});
+    fixture.detectChanges();
+    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]')
+    expect(submitBtn?.disabled).toBe(false);
+  });
+
+  it('click on Submit button with successfull login should login session and go to /session', () => {
+    component.form.setValue({email: 'bob@test.com', password: '123456'});
+    fixture.detectChanges();
+    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]') 
     const sessionServiceSpy = jest.spyOn(sessionService,"logIn");
     const session = Object({
       token: "token",
@@ -73,17 +114,23 @@ describe('LoginComponent', () => {
     }) as SessionInformation;
     const routerSpy = jest.spyOn(router,"navigate");
     authService.login = jest.fn(() => new Observable((obs) => obs.next(session)));
-    component.submit();
+    submitBtn?.click();
     expect(sessionServiceSpy).toBeCalledWith(session)
     expect(routerSpy).toBeCalledWith(['/sessions']);
     expect(component.onError).toBe(false);
   });
 
-  it('failing submit should set onError', () => {
+  it('click on Submit button with login failure should display error', () => {
     const httpError = new HttpErrorResponse({ error: 'Unhautorized', status: 401 });
+    const loginElement: HTMLElement = fixture.nativeElement;
+    const submitBtn : HTMLButtonElement | null = loginElement.querySelector('button[type="submit"]') 
     authService.login = jest.fn(() => new Observable((obs) => obs.error(httpError)));
-    component.submit();
-    expect(component.onError).toBe(true);
+    component.form.setValue({email: 'bob@test.com', password: '123456'});
+    fixture.detectChanges();
+    expect(submitBtn?.disabled).toBe(false);
+    submitBtn?.click()
+    fixture.detectChanges(); 
+    expect(loginElement.querySelector('p.error')?.textContent).toContain('An error occurred');
   });
 
 });
