@@ -12,6 +12,7 @@ import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
+import { DatePipe } from '@angular/common';
 
 class MatSnackBarStub{
   open(){
@@ -22,29 +23,32 @@ class MatSnackBarStub{
   }
 }
 
-describe('MeComponent', () => {
+describe('MeComponent with user', () => {
   let component: MeComponent;
   let fixture: ComponentFixture<MeComponent>;
   let snackBar: MatSnackBar;
   let userService: UserService;
   let router: Router;
-  const now =  new Date();
+  const date1 =  new Date(2024, 7, 30);
+  const dateString1 =  "August 30, 2024";
+  const date2 =  new Date(2024, 8, 6);
+  const dateString2 =  "September 6, 2024";
   const mockSessionService = {
     sessionInformation: {
-      admin: true,
-      id: 1,
+      admin: false,
+      id: 2,
     },
     logOut : jest.fn()
   }
 
   const mockUser = {
-    id:1,
-    email: "bob@test.com",
-    lastName: "Le Bricoleur",
-    firstName: "Bob",
-    admin: true,
-    createdAt: now,
-    updatedAt: now
+    id:'2',
+    email: "alice@test.com",
+    lastName: "In Wonderland",
+    firstName: "Alice",
+    admin: false,
+    createdAt: date1,
+    updatedAt: date2
   }
 
   beforeEach(async () => {
@@ -82,44 +86,107 @@ describe('MeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should get user Info from session at initilization', () => {
+  it('should get non admin user Info from session at initilization', () => {
     const userServiceSpy = jest.spyOn(userService, "getById");
-    expect(userServiceSpy).toBeCalledWith("1");
+    expect(userServiceSpy).toBeCalledWith('2');
     expect(component.user).toBe(mockUser);
+    expect(component.user?.admin).toBeFalsy();
   });
 
-  it('should display user Info at initilization', () => {
+  it('should display non admin user Info and delete button at initilization', () => {
     const meElement: HTMLElement = fixture.nativeElement;
-    expect(meElement.querySelectorAll("p")[0].textContent).toContain(mockUser.firstName + " " + mockUser.lastName.toUpperCase());
-    expect(meElement.querySelectorAll("p")[1].textContent).toContain(mockUser.email);
+    expect(meElement.querySelectorAll('p')[0].textContent).toContain(mockUser.firstName + " " + mockUser.lastName.toUpperCase());
+    expect(meElement.querySelectorAll('p')[1].textContent).toContain(mockUser.email);
+    expect(meElement.querySelectorAll('p')[3].textContent).toContain(dateString1);
+    expect(meElement.querySelectorAll('p')[4].textContent).toContain(dateString2);
+    expect(meElement.querySelectorAll('button')[1]?.textContent).toBeTruthy();
   });
 
-  it('back should navigate back in history', () => {
+  it('Back button on click should navigate back in history', () => {
     const historySpy = jest.spyOn(window.history,"back");
-    component.back()
+    const backBtn: HTMLButtonElement = fixture.nativeElement.querySelector('button');
+    backBtn.click();
     expect(historySpy).toBeCalled();
   });
 
-  it('delete should delete user, notify the deletion and logout to root location', () => {
+  it('Click on Delete button should call delete service, notify the deletion and logout to root location', () => {
     const userServiceSpy = jest.spyOn(userService, "delete");
     const snackBarSpy = jest.spyOn(snackBar, "open");
     const routerSpy = jest.spyOn(router, "navigate");
-    component.delete();
-    expect(userServiceSpy).toBeCalledWith("1");
+    const deleteBtn: HTMLButtonElement = fixture.nativeElement.querySelectorAll('button')[1];
+    deleteBtn.click();
+    expect(userServiceSpy).toBeCalledWith("2");
     expect(snackBarSpy).toBeCalled();
     expect(routerSpy).toBeCalledWith(['/']);
   });
 
-  it('Click on Delete button should delete user, notify the deletion and logout to root location', () => {
-    const userServiceSpy = jest.spyOn(userService, "delete");
-    const snackBarSpy = jest.spyOn(snackBar, "open");
-    const routerSpy = jest.spyOn(router, "navigate");
-    const deleteBtn: HTMLButtonElement | null = fixture.nativeElement.querySelector('button[ng-reflect-color="warn"]');
-    deleteBtn?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-    expect(deleteBtn).toBeDefined();
-    expect(userServiceSpy).toBeCalledWith("1");
-    expect(snackBarSpy).toBeCalled();
-    expect(routerSpy).toBeCalledWith(['/']);
+});
+
+describe('MeComponent with admin', () => {
+  let component: MeComponent;
+  let fixture: ComponentFixture<MeComponent>;
+  let userService: UserService;
+  const mockSessionService = {
+    sessionInformation: {
+      admin: true,
+      id: 1,
+    },
+    logOut : jest.fn()
+  }
+
+  const date1 =  new Date(2024, 7, 26);
+  const dateString1 =  "August 26, 2024";
+  const date2 =  new Date(2024, 8, 6);
+  const dateString2 =  "September 6, 2024";
+  const mockAdminUser = {
+    id:1,
+    email: "bob@test.com",
+    lastName: "Le Bricoleur",
+    firstName: "Bob",
+    admin: true,
+    createdAt: date1,
+    updatedAt: date2
+  }
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [MeComponent],
+      imports: [
+        RouterTestingModule,
+        MatSnackBarModule,
+        HttpClientModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule
+      ],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: UserService, useValue: {getById: jest.fn(), delete: jest.fn()} },
+      ],
+    })
+      .compileComponents();
+    userService = TestBed.inject(UserService);
+    userService.getById = jest.fn(() => new Observable<any>((obs => obs.next(mockAdminUser))));
+    
+    fixture = TestBed.createComponent(MeComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
+
+  it('should display admin Info at initilization', () => {
+    const meElement: HTMLElement = fixture.nativeElement;
+    expect(meElement.querySelectorAll("p")[0].textContent).toContain(mockAdminUser.firstName + " " + mockAdminUser.lastName.toUpperCase());
+    expect(meElement.querySelectorAll("p")[1].textContent).toContain(mockAdminUser.email);
+    expect(meElement.querySelectorAll("p")[2].textContent).toContain("You are admin");
+    expect(meElement.querySelectorAll('p')[3].textContent).toContain(dateString1);
+    expect(meElement.querySelectorAll('p')[4].textContent).toContain(dateString2);
+  });
+
+  it('should not display delete button', () => {
+    const meElement: HTMLElement = fixture.nativeElement;
+    expect(meElement.querySelectorAll('button')[1]).toBeUndefined();
+  });
+
 
 });
