@@ -88,6 +88,12 @@ describe('MeComponent', () => {
     expect(component.user).toBe(mockUser);
   });
 
+  it('should display user Info at initilization', () => {
+    const meElement: HTMLElement = fixture.nativeElement;
+    expect(meElement.querySelectorAll("p")[0].textContent).toContain(mockUser.firstName + " " + mockUser.lastName.toUpperCase());
+    expect(meElement.querySelectorAll("p")[1].textContent).toContain(mockUser.email);
+  });
+
   it('back should navigate back in history', () => {
     const historySpy = jest.spyOn(window.history,"back");
     component.back()
@@ -99,6 +105,18 @@ describe('MeComponent', () => {
     const snackBarSpy = jest.spyOn(snackBar, "open");
     const routerSpy = jest.spyOn(router, "navigate");
     component.delete();
+    expect(userServiceSpy).toBeCalledWith("1");
+    expect(snackBarSpy).toBeCalled();
+    expect(routerSpy).toBeCalledWith(['/']);
+  });
+
+  it('Click on Delete button should delete user, notify the deletion and logout to root location', () => {
+    const userServiceSpy = jest.spyOn(userService, "delete");
+    const snackBarSpy = jest.spyOn(snackBar, "open");
+    const routerSpy = jest.spyOn(router, "navigate");
+    const deleteBtn: HTMLButtonElement | null = fixture.nativeElement.querySelector('button[ng-reflect-color="warn"]');
+    deleteBtn?.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+    expect(deleteBtn).toBeDefined();
     expect(userServiceSpy).toBeCalledWith("1");
     expect(snackBarSpy).toBeCalled();
     expect(routerSpy).toBeCalledWith(['/']);
