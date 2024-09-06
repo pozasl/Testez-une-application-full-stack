@@ -114,7 +114,7 @@ describe('LoginComponent', () => {
     }) as SessionInformation;
     const routerSpy = jest.spyOn(router,"navigate");
     authService.login = jest.fn(() => new Observable((obs) => obs.next(session)));
-    submitBtn?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    submitBtn?.click();
     expect(sessionServiceSpy).toBeCalledWith(session)
     expect(routerSpy).toBeCalledWith(['/sessions']);
     expect(component.onError).toBe(false);
@@ -128,7 +128,7 @@ describe('LoginComponent', () => {
     component.form.setValue({email: 'bob@test.com', password: '123456'});
     fixture.detectChanges();
     expect(submitBtn?.disabled).toBe(false);
-    submitBtn?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    submitBtn?.click()
     fixture.detectChanges(); 
     expect(loginElement.querySelector('p.error')?.textContent).toContain('An error occurred');
   });

@@ -122,7 +122,7 @@ describe('RegisterComponent', () => {
     const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]') 
     const authServiceSpy = jest.spyOn(authService,"register");
     const routerSpy = jest.spyOn(router,"navigate");
-    submitBtn?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    submitBtn?.click()
     expect(authServiceSpy).toBeCalledWith(registerRequest);
     expect(routerSpy).toBeCalledWith(['/login']);
   });
@@ -134,7 +134,7 @@ describe('RegisterComponent', () => {
     component.form.setValue(registerRequest);
     fixture.detectChanges();
     const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]') 
-    submitBtn?.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    submitBtn?.click()
     fixture.detectChanges(); 
     expect(loginElement.querySelector('span.error')?.textContent).toContain('An error occurred');
   });
