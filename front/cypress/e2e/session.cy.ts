@@ -187,16 +187,19 @@ describe('Sessions spec', () => {
           body: {message: 'Session updated'}
         })
         cy.intercept('GET', '/api/session/3', {
-          body: sessions[0]
+          body: sessionCreate
         })
         cy.get('.mat-card-actions > :nth-child(2)').last().click();
         cy.url().should('include', '/sessions/update/3')
         cy.get('h1').contains('Update session').should('have.length', 1)
+        cy.get('input[formControlName=name]').should('have.value', sessionCreate.name)
         cy.get('input[formControlName=name]').clear()
         cy.get('input[formControlName=name]').type("Session test (edit)")
+        cy.get('input[formControlName=date]').should('have.value', '2024-10-04')
         cy.get('input[formControlName=date]').type("2024-09-16")
         cy.get('.mat-form-field-type-mat-select').click()
         cy.get('mat-option').contains('Dhalsim INDIA').click()
+        cy.get('textarea').should('have.value', sessionCreate.description)
         cy.get('textarea').clear()
         cy.get('textarea').type("Session de Yoga orientée assouplissment")
         cy.intercept('GET', '/api/session', {

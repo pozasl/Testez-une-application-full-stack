@@ -23,12 +23,18 @@ describe('Login spec', () => {
     cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
 
     cy.url().should('include', '/sessions')
-    // cy.screenshot("Redirect to session")
+    cy.contains('Yoga app').should('exist')
+    cy.get('span.link').contains('Sessions').should('exist')
+    cy.get('span.link').contains('Account').should('exist')
+    cy.get('span.link').contains('Logout').should('exist')
+
   })
 
   it('logout successfull', () => {
     cy.get('span.link').contains('Logout').click()
     cy.location("pathname").should("eq", "/")
+    cy.get('span.link').contains('Login').should('exist')
+    cy.get('span.link').contains('Register').should('exist')
   })
 
   it('Login failure', () => {
@@ -60,6 +66,7 @@ describe('Login spec', () => {
     cy.get('input[formControlName=email]').type("nobody-studio.com")
     cy.get('input:invalid').should('have.length', 1)
     cy.get('input[formControlName=password]').type(`${"test!234"}`)
+
     // This bypass form validation before sending request
     // cy.get('input[formControlName=password]').type(`${"test!234"}{enter}{enter}`)
     // cy.get('.error').contains('An error occurred').should('exist')
