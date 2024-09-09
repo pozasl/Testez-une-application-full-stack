@@ -44,4 +44,4 @@ Thumbs.db
 **/.DS_Store 
 
 # cypress output
-.nyc_output/*
+.nyc_output
