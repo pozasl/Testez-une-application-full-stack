@@ -51,7 +51,7 @@ public class AuthControllerTest {
     AuthEntryPointJwt authEntryPointJwt;
 
     @Test
-    public void givenUserLoginSuccess_authenticateUser_shouldReturnJwtResponse() throws Exception {
+    public void givenAdminLoginSuccess_authenticateUser_shouldReturnJwtResponse() throws Exception {
         // GIVEN
         Long userId = 1L;
         String userEmail = "bob@test.com";
@@ -88,7 +88,36 @@ public class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
                 .andExpect(status().isOk());
+    }
 
+    @Test
+    public void givenUserLoginSuccess_authenticateUser_shouldReturnJwtResponse() throws Exception {
+        // GIVEN
+        Long userId = 2L;
+        String userEmail = "alice@test.com";
+        String userLastName = "Inwonderland";
+        String userFirstName = "Alice";
+        String userPassword = "pass1234";
+        boolean admin = false;
+
+        String reqBody = String.format(
+                "{\"email\": \"%s\", \"password\": \"%s\"}",
+                userEmail,
+                userPassword);
+        UserDetailsImpl userDetail = new UserDetailsImpl(userId, userEmail, userFirstName, userLastName, admin,
+                userPassword);
+        Authentication authMock = mock(Authentication.class);
+        //
+        when(authenticationManager.authenticate(any())).thenReturn(authMock);
+        when(jwtUtils.generateJwtToken(authMock)).thenReturn("jwt");
+        when(authMock.getPrincipal()).thenReturn(userDetail);
+        when(userRepository.findByEmail(userEmail)).thenReturn(Optional.empty());
+        // WHEN THEN
+        mockMvc.perform(post("/api/auth/login")
+                // .with(authentication(authMock))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(reqBody))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -123,6 +152,30 @@ public class AuthControllerTest {
         verify(userRepository).existsByEmail(userEmail);
         verify(passwordEncoder).encode(userPassword);
         verify(userRepository).save(user);
+    }
+
+    @Test
+    public void givenUserEmailAlreadyUsed_registerUser_shouldReturnBadRequest() throws Exception {
+        // GIVEN
+        String userEmail = "bob@test.com";
+        String userPassword = "pass1234";
+        String userFirstName = "Bob";
+        String userLastName = "Le Bricoleur";
+        String reqBody = String.format(
+                "{\"email\": \"%s\",\"firstName\": \"%s\",\"lastName\": \"%s\", \"password\": \"%s\"}",
+                userEmail,
+                userFirstName,
+                userLastName,
+                userPassword);
+
+        when(userRepository.existsByEmail(userEmail)).thenReturn(true);
+        // WHEN
+        mockMvc.perform(post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(reqBody))
+                .andExpect(status().isBadRequest());
+        // THEN
+        verify(userRepository).existsByEmail(userEmail);
     }
 
 }

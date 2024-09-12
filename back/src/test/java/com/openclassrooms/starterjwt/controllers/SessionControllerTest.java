@@ -54,8 +54,8 @@ public class SessionControllerTest {
     @Test
     void noSessionWithId9999Exist_findById9999_shouldReturnNotFound() throws Exception {
         // GIVEN
-        when(sessionService.getById(1L)).thenReturn(new Session());
-        mockMvc.perform(get("/api/session/1")).andExpect(status().isOk());
+        when(sessionService.getById(1L)).thenReturn(null);
+        mockMvc.perform(get("/api/session/1")).andExpect(status().isNotFound());
     }
 
     @Test
