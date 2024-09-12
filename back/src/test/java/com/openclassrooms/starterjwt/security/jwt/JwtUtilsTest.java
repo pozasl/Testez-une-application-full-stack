@@ -3,12 +3,10 @@ package com.openclassrooms.starterjwt.security.jwt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,20 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-
 @ExtendWith(MockitoExtension.class)
-// @TestPropertySource(properties = {
-//     "oc.app.jwtSecret=jwtKey",
-//     "oc.app.jwtExpirationMs=3000"
-// })
 public class JwtUtilsTest {
 
     @InjectMocks
@@ -42,13 +31,13 @@ public class JwtUtilsTest {
     public void setupProps() {
         // GIVEN
         ReflectionTestUtils.setField(jwtUtils, "jwtSecret", "jwtKey");
-        ReflectionTestUtils.setField(jwtUtils, "jwtExpirationMs", 5000); 
+        ReflectionTestUtils.setField(jwtUtils, "jwtExpirationMs", 5000);
 
     }
 
     @Nested
     class withAuthTest {
-        
+
         @BeforeEach
         void setupAuth() {
             UserDetails useDetails = new UserDetailsImpl(1L, "bob@test.com", "Bob", "Le Bricoleur", true, "pass4321");
@@ -108,5 +97,4 @@ public class JwtUtilsTest {
         assertFalse(valid);
     }
 
-    
 }
