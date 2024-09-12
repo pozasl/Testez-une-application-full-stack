@@ -2,6 +2,7 @@ package com.openclassrooms.starterjwt.security.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +51,24 @@ public class UserDetailsImplTest {
         @Test
         void isEnabled_shouldReturnTrue() {
             assertTrue(userDetails.isEnabled());
+        }
+
+        @Test
+        void userDetailsWithSameId_equals_shoulReturntrue() {
+            // GIVEN
+            UserDetails userDetails1 = new UserDetailsImpl(1L, "bob@test.com", "Bob", "Le Bricoleur", true, "pass4321");
+            UserDetails userDetails2 = new UserDetailsImpl(1L, "boby@test.com", "Boby", "El Bricolo", false, "pass4134");
+            // WHEN THEN
+            assertEquals(userDetails1, userDetails2);
+        }
+
+        @Test
+        void userDetailsWithNotTheSameId_equals_shoulReturnfalse() {
+            // GIVEN
+            UserDetails userDetails1 = new UserDetailsImpl(1L, "bob@test.com", "Bob", "Le Bricoleur", true, "pass4321");
+            UserDetails userDetails2 = new UserDetailsImpl(2L, "bob@test.com", "Bob", "Le Bricoleur", true, "pass4321");
+            // WHEN THEN
+            assertNotEquals(userDetails1, userDetails2);
         }
 
     }
