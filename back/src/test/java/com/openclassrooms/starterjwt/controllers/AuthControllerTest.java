@@ -9,11 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -24,12 +21,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.repository.UserRepository;
+import com.openclassrooms.starterjwt.security.jwt.AuthEntryPointJwt;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
+import com.openclassrooms.starterjwt.security.services.UserDetailsServiceImpl;
 
-@WebMvcTest(controllers = { AuthController.class }) //, UserDetailsServiceImpl.class, AuthEntryPointJwt.class })
-@AutoConfigureMockMvc(addFilters = false)
-// @Import(WebSecurityConfig.class)
+@WebMvcTest(controllers = { AuthController.class })
 public class AuthControllerTest {
 
     @Autowired
@@ -47,8 +44,12 @@ public class AuthControllerTest {
     @MockBean
     UserRepository userRepository;
 
+    @MockBean
+    UserDetailsServiceImpl userDetailsServiceImpl;
 
-    @Disabled
+    @MockBean
+    AuthEntryPointJwt authEntryPointJwt;
+
     @Test
     public void givenUserLoginSuccess_authenticateUser_shouldReturnJwtResponse() throws Exception {
         // GIVEN
@@ -82,17 +83,16 @@ public class AuthControllerTest {
         when(authMock.getPrincipal()).thenReturn(userDetail);
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
         // WHEN THEN
-        mockMvc.perform(post("api/auth/login")
-                //.with(authentication(authMock))
+        mockMvc.perform(post("/api/auth/login")
+                // .with(authentication(authMock))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
                 .andExpect(status().isOk());
 
     }
 
-    @Disabled
     @Test
-    public void givenUserCreationSuccess_registerUser_shouldReturnOkMessage() throws Exception{
+    public void givenUserCreationSuccess_registerUser_shouldReturnOkMessage() throws Exception {
         // GIVEN
         String userEmail = "bob@test.com";
         String userPassword = "pass1234";
@@ -104,21 +104,18 @@ public class AuthControllerTest {
                 userLastName,
                 userFirstName,
                 encodedPassword,
-                false)
-        ;
+                false);
         String reqBody = String.format(
                 "{\"email\": \"%s\",\"firstName\": \"%s\",\"lastName\": \"%s\", \"password\": \"%s\"}",
-                userEmail,                
+                userEmail,
                 userFirstName,
                 userLastName,
-                userPassword
-                );
-
+                userPassword);
 
         when(userRepository.existsByEmail(userEmail)).thenReturn(false);
         when(passwordEncoder.encode(userPassword)).thenReturn(encodedPassword);
         // WHEN
-        mockMvc.perform(post("api/auth/register")
+        mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
                 .andExpect(status().isOk());
