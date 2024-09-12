@@ -51,6 +51,19 @@ public class UserControllerTest {
     }
 
     @Test
+    void noUserWithId9999Exist_findById9999_shouldReturnNotFound() throws Exception {
+        // GIVEN
+        when(userService.findById(9999L)).thenReturn(null);
+        mockMvc.perform(get("/api/user/9999")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void userIdString_findById_shouldReturnBadRequest() throws Exception {
+        // GIVEN
+        mockMvc.perform(get("/api/user/a")).andExpect(status().isBadRequest());
+    }
+
+    @Test
     @WithMockUser(username="bob@test.com")
     void autenticatedUserWithId1Exists_saveWithId1_shouldReturnOk() throws Exception {
         // GIVEN

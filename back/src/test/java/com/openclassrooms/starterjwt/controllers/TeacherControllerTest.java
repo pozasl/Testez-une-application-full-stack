@@ -40,21 +40,21 @@ public class TeacherControllerTest {
     AuthEntryPointJwt authEntryPointJwt;
 
     @Test
-    void teacherWithId1Exists_findById1_shouldReturnTeacher() throws Exception {
+    void teacherWithId1Exists_findById1_shouldReturnOk() throws Exception {
         // GIVEN
         when(teacherService.findById(1L)).thenReturn(new Teacher());
         mockMvc.perform(get("/api/teacher/1")).andExpect(status().isOk());
     }
 
     @Test
-    void npTeacherWithId9999Exists_findById999_shouldReturnError() throws Exception {
+    void noTeacherWithId9999Exists_findById999_shouldReturnNotFound() throws Exception {
         // GIVEN
         when(teacherService.findById(9999L)).thenReturn(null);
         mockMvc.perform(get("/api/teacher/9999")).andExpect(status().isNotFound());
     }
 
     @Test
-    void teacherIdString_findById_shouldReturnError() throws Exception {
+    void teacherIdString_findById_shouldReturnBadRequest() throws Exception {
         mockMvc.perform(get("/api/teacher/aaa")).andExpect(status().isBadRequest());
     }
 
