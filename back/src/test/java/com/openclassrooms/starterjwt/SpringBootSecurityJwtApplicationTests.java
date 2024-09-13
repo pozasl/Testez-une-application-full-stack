@@ -35,4 +35,9 @@ public class SpringBootSecurityJwtApplicationTests {
 	  assertNotNull(sessionController);
   }
 
+  @Test
+  public void applicationContextTest() {
+    SpringBootSecurityJwtApplication.main(new String[] {});
+  }
+
 }
