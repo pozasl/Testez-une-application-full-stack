@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.BeanUtils;
 
 import com.openclassrooms.starterjwt.dto.SessionDto;
 import com.openclassrooms.starterjwt.models.Session;
@@ -84,6 +85,16 @@ public class SessionMapperTest {
         }
     }
 
+    @Test
+    public void sessionDtowithNullTeacherId_toEntity_shouldConvertToSessionEntityWithNullTeacher() {
+        // GIVEN
+        SessionDto dto = new SessionDto();
+        // WHEN
+        final Session entity = sessionMapper.toEntity(dto);
+        // THEN
+        assertNull(entity.getTeacher());
+    };
+
     @Nested
     class NotNullInputTest {
         @BeforeEach
@@ -120,16 +131,36 @@ public class SessionMapperTest {
             }
 
             @Test
-            public void toEntity_shouldConvertASessionDtoToASessionEntity() {
+            public void sessionDto_toEntity_shouldConvertToSessionEntity() {
                 // WHEN
                 final Session entity = sessionMapper.toEntity(dto1);
                 // THEN
                 assertEquals(entity1, entity);
-
             };
 
             @Test
-            public void toEntity_shouldConvertASessionDtoListToASessionEntityList() {
+            public void sessionDtowithUnknowTeacherId_toEntity_shouldConvertToSessionEntityWithNullTeacher() {
+                // GIVEN
+                when(teacherService.findById(teacher1.getId())).thenReturn(null);
+                // WHEN
+                final Session entity = sessionMapper.toEntity(dto1);
+                // THEN
+                assertNull(entity.getTeacher());
+            };
+
+            @Test
+            public void sessionDtowithUnknowUser_toEntity_shouldConvertToSessionEntityWithNullTeacher() {
+                // GIVEN
+                when(userService.findById(user1.getId())).thenReturn(null);
+                // WHEN
+                final Session entity = sessionMapper.toEntity(dto1);
+                // THEN
+                assertNull(entity.getUsers().get(0));
+            };
+
+
+            @Test
+            public void sessionDtoList_toEntity_shouldConvertToSessionEntityList() {
                 // GIVEN
                 List<SessionDto> dtos = List.of(
                         dto1,
@@ -146,13 +177,45 @@ public class SessionMapperTest {
         class ToDtoTest {
 
             @Test
-            public void toDto_shouldConvertASessionEntityToASessionDto() {
-                // GIVEN
+            public void sessionEntity_toDto_shouldConverToSessionDto() {
                 // WHEN
                 final SessionDto dto = sessionMapper.toDto(entity1);
                 // THEN
                 assertEquals(dto1, dto);
             }
+
+            @Test
+            public void sessionEntityWithNullTeacher_toDto_shouldConverToSessionDtoWithNullTeacherId() {
+                // GIVEN
+                Session entity = new Session();
+                BeanUtils.copyProperties(entity1, entity);
+                entity.setTeacher(null);
+                // WHEN
+                final SessionDto dto = sessionMapper.toDto(entity);
+                // THEN
+                assertNull(dto.getTeacher_id());
+            }
+
+            @Test
+            public void sessionEntityWithNullTeacherId_toDto_shouldConverToSessionDtoWithNullTeacherId() {
+                // GIVEN
+                Session entity = new Session();
+                BeanUtils.copyProperties(entity1, entity);
+                entity.setTeacher(new Teacher().setId(null));
+                // WHEN
+                final SessionDto dto = sessionMapper.toDto(entity);
+                // THEN
+                assertNull(dto.getTeacher_id());
+            }
+
+            @Test
+            public void sessionEntityList_toDto_shouldConverToSessionDtoList() {
+                // WHEN
+                final List<SessionDto> dtos = sessionMapper.toDto(List.of (entity1,entity2));
+                // THEN
+                assertEquals(List.of(dto1, dto2), dtos);
+            }
+
 
         }
     }
