@@ -54,11 +54,12 @@ public class UserDetailsImplTest {
         }
 
         @Test
-        void userDetailsWithSameId_equals_shoulReturntrue() {
+        void sameUserDetailsOruserDetailsWithSameId_equals_shoulReturntrue() {
             // GIVEN
             UserDetails userDetails1 = new UserDetailsImpl(1L, "bob@test.com", "Bob", "Le Bricoleur", true, "pass4321");
             UserDetails userDetails2 = new UserDetailsImpl(1L, "boby@test.com", "Boby", "El Bricolo", false, "pass4134");
             // WHEN THEN
+            assertEquals(userDetails1, userDetails1);
             assertEquals(userDetails1, userDetails2);
         }
 
@@ -69,6 +70,16 @@ public class UserDetailsImplTest {
             UserDetails userDetails2 = new UserDetailsImpl(2L, "bob@test.com", "Bob", "Le Bricoleur", true, "pass4321");
             // WHEN THEN
             assertNotEquals(userDetails1, userDetails2);
+        }
+
+        @Test
+        void nullOrOtherType_equals_shoulReturnfalse() {
+            // GIVEN
+            UserDetails userDetails1 = new UserDetailsImpl(1L, "bob@test.com", "Bob", "Le Bricoleur", true, "pass4321");
+            String str = "";
+            // WHEN THEN
+            assertNotEquals(userDetails1, null);
+            assertNotEquals(userDetails1, str);
         }
 
     }
