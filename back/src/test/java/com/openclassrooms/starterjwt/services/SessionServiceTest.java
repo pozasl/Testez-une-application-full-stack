@@ -148,8 +148,9 @@ public class SessionServiceTest {
         // GIVEN
         Long userId = 1L;
         Long sessionId = 2L;
-
+        User user1 = new User().setId(userId);
         when(sessionRepository.findById(sessionId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user1));
         // WHEN THEN
         assertThrows(NotFoundException.class, ()->sessionServiceCut.participate(sessionId, userId));
     }
@@ -161,7 +162,7 @@ public class SessionServiceTest {
         Long sessionId = 2L;
         Session session = new Session();
         when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(session));
-        when(sessionRepository.findById(sessionId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
         // WHEN THEN
         assertThrows(NotFoundException.class, ()->sessionServiceCut.participate(sessionId, userId));
     }
