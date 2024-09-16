@@ -1,5 +1,9 @@
 package com.openclassrooms.starterjwt.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -73,6 +77,7 @@ public class SessionControllerTest {
 
     @Test
     void validSession_create_shouldReturnOk() throws Exception {
+        when(sessionService.create(any())).thenReturn(new Session());
         String reqBody = "{\"name\": \"session 1\",\"date\": \"2012-01-01T00:00:00.000+00:00\",\"teacher_id\": 1,\"description\": \"my description\",\"users\": []}";
         mockMvc.perform(post("/api/session")
                 .content(reqBody)
@@ -81,6 +86,7 @@ public class SessionControllerTest {
 
     @Test
     void validSession_updateWithId1_shouldReturnOk() throws Exception {
+        when(sessionService.update(anyLong(),any())).thenReturn(new Session());
         String reqBody = "{\"name\": \"session 1\",\"date\": \"2012-01-01T00:00:00.000+00:00\",\"teacher_id\": 1,\"description\": \"my description\",\"users\": []}";
         mockMvc.perform(put("/api/session/1")
                 .content(reqBody)
@@ -99,7 +105,11 @@ public class SessionControllerTest {
     void sessionWithId1Exists_saveId1_shouldReturnOk() throws Exception {
         // GIVEN
         when(sessionService.getById(1L)).thenReturn(new Session());
+        doNothing().when(sessionService).delete(1L);
+        // WHEN THEN
         mockMvc.perform(delete("/api/session/1")).andExpect(status().isOk());
+        verify(sessionService).getById(1L);
+        verify(sessionService).delete(1L);
     }
 
     @Test
@@ -117,7 +127,9 @@ public class SessionControllerTest {
 
     @Test
     void sessionId2AndUnparticipatingUserId1Exist_participate_shouldReturnOk() throws Exception {
+        doNothing().when(sessionService).participate(2L,1L);
         mockMvc.perform(post("/api/session/2/participate/1")).andExpect(status().isOk());
+        verify(sessionService).participate(2L,1L);
     }
 
     @Test
@@ -128,7 +140,9 @@ public class SessionControllerTest {
 
     @Test
     void sessionId2AndParticipatingUserId1Exist_noLongerParticipate_shouldReturnOk() throws Exception {
+        doNothing().when(sessionService).noLongerParticipate(2L,1L);
         mockMvc.perform(delete("/api/session/2/participate/1")).andExpect(status().isOk());
+        doNothing().when(sessionService).noLongerParticipate(2L,1L);
     }
 
     @Test

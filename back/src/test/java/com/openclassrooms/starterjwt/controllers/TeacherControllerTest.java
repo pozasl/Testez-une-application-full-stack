@@ -1,21 +1,23 @@
 package com.openclassrooms.starterjwt.controllers;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
 import com.openclassrooms.starterjwt.mapper.TeacherMapper;
 import com.openclassrooms.starterjwt.models.Teacher;
 import com.openclassrooms.starterjwt.security.jwt.AuthEntryPointJwt;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 import com.openclassrooms.starterjwt.security.services.UserDetailsServiceImpl;
 import com.openclassrooms.starterjwt.services.TeacherService;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = { TeacherController.class })
 @AutoConfigureMockMvc(addFilters = false)
@@ -44,6 +46,7 @@ public class TeacherControllerTest {
         // GIVEN
         when(teacherService.findById(1L)).thenReturn(new Teacher());
         mockMvc.perform(get("/api/teacher/1")).andExpect(status().isOk());
+        verify(teacherService).findById(1L);
     }
 
     @Test
@@ -60,7 +63,9 @@ public class TeacherControllerTest {
 
     @Test
     void teachersExist_findAll_shouldReturnTeachers() throws Exception {
+        when(teacherService.findAll()).thenReturn(List.of(new Teacher()));
         mockMvc.perform(get("/api/teacher")).andExpect(status().isOk());
+        verify(teacherService).findAll();
     }
 
 }

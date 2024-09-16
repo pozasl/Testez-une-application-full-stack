@@ -1,18 +1,20 @@
 package com.openclassrooms.starterjwt.controllers;
 
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
+
 import com.openclassrooms.starterjwt.mapper.UserMapper;
 import com.openclassrooms.starterjwt.models.User;
 import com.openclassrooms.starterjwt.security.jwt.AuthEntryPointJwt;
 import com.openclassrooms.starterjwt.security.jwt.JwtUtils;
 import com.openclassrooms.starterjwt.security.services.UserDetailsServiceImpl;
 import com.openclassrooms.starterjwt.services.UserService;
-
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -47,7 +49,9 @@ public class UserControllerTest {
     void userWithId1Exists_findById1_shouldReturnOk() throws Exception {
         // GIVEN
         when(userService.findById(1L)).thenReturn(new User());
+        // WHEN THEN
         mockMvc.perform(get("/api/user/1")).andExpect(status().isOk());
+        verify(userService).findById(1L);
     }
 
     @Test
@@ -69,8 +73,11 @@ public class UserControllerTest {
         // GIVEN
         User bob = new  User(1L, "bob@test.com", "Le Bricoleur", "Bob", "pass4321", true, LocalDateTime.now(), LocalDateTime.now());
         when(userService.findById(1L)).thenReturn(bob);
+        doNothing().when(userService).delete(1L);
         // WHEN THEN
         mockMvc.perform(delete("/api/user/1")).andExpect(status().isOk());
+        verify(userService).findById(1L);
+        verify(userService).delete(1L);
     }
 
     @Test
