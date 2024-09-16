@@ -29,6 +29,8 @@ describe('AppComponent', () => {
     }).compileComponents();
     router = TestBed.inject(Router);
     sessionService = TestBed.inject(SessionService);
+    sessionService.logOut = jest.fn();
+    router.navigate = jest.fn();
   });
 
   describe(' when not logged', () => {
