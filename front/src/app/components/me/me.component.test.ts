@@ -29,7 +29,9 @@ describe('MeComponent with user', () => {
   let userService: UserService;
   let router: Router;
   const date1 =  new Date(2024, 7, 30);
+  const dateString1 =  "August 30, 2024";
   const date2 =  new Date(2024, 8, 6);
+  const dateString2 =  "September 6, 2024";
   const mockSessionService = {
     sessionInformation: {
       admin: false,
@@ -71,7 +73,6 @@ describe('MeComponent with user', () => {
     snackBar = TestBed.inject(MatSnackBar);
     userService = TestBed.inject(UserService);
     router = TestBed.inject(Router);
-    router.navigate = jest.fn();
     userService.getById = jest.fn(() => new Observable<any>((obs => obs.next(mockUser))));
     userService.delete = jest.fn(() => new Observable<any>((obs => obs.next("deleted"))));
     
@@ -80,28 +81,28 @@ describe('MeComponent with user', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should display non admin user Info and delete button at initilization', () => {
+    const meElement: HTMLElement = fixture.nativeElement;
+    expect(meElement.querySelectorAll('p')[0].textContent).toContain(mockUser.firstName + " " + mockUser.lastName.toUpperCase());
+    expect(meElement.querySelectorAll('p')[1].textContent).toContain(mockUser.email);
+    expect(meElement.querySelectorAll('p')[3].textContent).toContain(dateString1);
+    expect(meElement.querySelectorAll('p')[4].textContent).toContain(dateString2);
+    expect(meElement.querySelectorAll('button')[1]?.textContent).toBeTruthy();
   });
 
-  it('should get non admin user Info from session at initilization', () => {
-    const userServiceSpy = jest.spyOn(userService, "getById");
-    expect(userServiceSpy).toBeCalledWith('2');
-    expect(component.user).toBe(mockUser);
-    expect(component.user?.admin).toBeFalsy();
-  });
-
-  it('Back should navigate back in history', () => {
+  it('Back button on click should navigate back in history', () => {
     const historySpy = jest.spyOn(window.history,"back");
-    component.back();
+    const backBtn: HTMLButtonElement = fixture.nativeElement.querySelector('button');
+    backBtn.click();
     expect(historySpy).toBeCalled();
   });
 
-  it('Delete should call delete service, notify the deletion and logout to root location', () => {
+  it('Click on Delete button should call delete service, notify the deletion and logout to root location', () => {
     const userServiceSpy = jest.spyOn(userService, "delete");
     const snackBarSpy = jest.spyOn(snackBar, "open");
     const routerSpy = jest.spyOn(router, "navigate");
-    component.delete()
+    const deleteBtn: HTMLButtonElement = fixture.nativeElement.querySelectorAll('button')[1];
+    deleteBtn.click();
     expect(userServiceSpy).toBeCalledWith("2");
     expect(snackBarSpy).toBeCalled();
     expect(routerSpy).toBeCalledWith(['/']);
@@ -122,7 +123,9 @@ describe('MeComponent with admin', () => {
   }
 
   const date1 =  new Date(2024, 7, 26);
+  const dateString1 =  "August 26, 2024";
   const date2 =  new Date(2024, 8, 6);
+  const dateString2 =  "September 6, 2024";
   const mockAdminUser = {
     id:1,
     email: "bob@test.com",
@@ -159,11 +162,18 @@ describe('MeComponent with admin', () => {
     fixture.detectChanges();
   });
 
-  it('should get admin user Info from session at initialization', () => {
-    const userServiceSpy = jest.spyOn(userService, "getById");
-    expect(userServiceSpy).toBeCalledWith('1');
-    expect(component.user).toBe(mockAdminUser);
-    expect(component.user?.admin).toBeTruthy();
+  it('should display admin Info at initialization', () => {
+    const meElement: HTMLElement = fixture.nativeElement;
+    expect(meElement.querySelectorAll("p")[0].textContent).toContain(mockAdminUser.firstName + " " + mockAdminUser.lastName.toUpperCase());
+    expect(meElement.querySelectorAll("p")[1].textContent).toContain(mockAdminUser.email);
+    expect(meElement.querySelectorAll("p")[2].textContent).toContain("You are admin");
+    expect(meElement.querySelectorAll('p')[3].textContent).toContain(dateString1);
+    expect(meElement.querySelectorAll('p')[4].textContent).toContain(dateString2);
+  });
+
+  it('should not display delete button', () => {
+    const meElement: HTMLElement = fixture.nativeElement;
+    expect(meElement.querySelectorAll('button')[1]).toBeUndefined();
   });
 
 });
