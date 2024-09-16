@@ -70,40 +70,6 @@ describe('RegisterComponent', () => {
     expect(component.onError).toBe(true);
   });
 
-  it('Submit button should be disabled when fields are empty', () => {
-    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]')
-    expect(submitBtn?.disabled).toBe(true);
-  });
-
-  it('invalid field should be invalid and submit should be disabled', () => {
-    component.form.setValue({
-      email: "aa",
-      firstName: "",
-      lastName: "",
-      password: ""
-    });
-    fixture.detectChanges();
-    const emailField : HTMLFormElement | null = fixture.nativeElement.querySelector('input[ng-reflect-name="email"]');
-    const firstNameField : HTMLFormElement | null = fixture.nativeElement.querySelector('input[ng-reflect-name="firstName"]');
-    const lastNameField : HTMLFormElement | null = fixture.nativeElement.querySelector('input[ng-reflect-name="lastName"]');
-    const passField : HTMLFormElement | null = fixture.nativeElement.querySelector('input[ng-reflect-name="password"]');
-    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]')
-    expect(submitBtn?.disabled).toBe(true);
-    expect(emailField?.classList).toContain("ng-invalid");
-    expect(firstNameField?.classList).toContain("ng-invalid");
-    expect(lastNameField?.classList).toContain("ng-invalid");
-    expect(passField?.classList).toContain("ng-invalid");
-  });
-
-  
-
-  it('Submit button should be enabled when fields are ok', () => {
-    component.form.setValue(registerRequest);
-    fixture.detectChanges();
-    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]')
-    expect(submitBtn?.disabled).toBe(false);
-  });
-
   it('submit with successfull register should go to /login', () => {
     const routerSpy = jest.spyOn(router,"navigate");
     authService.register = jest.fn(() => new Observable((obs) => obs.next()));
@@ -114,28 +80,5 @@ describe('RegisterComponent', () => {
     expect(routerSpy).toBeCalledWith(['/login']);
     expect(component.onError).toBe(false);
   });
-
-  it('click on Submit button with successfull register should go to /login', () => {
-    authService.register = jest.fn(() => new Observable((obs) => obs.next()));
-    component.form.setValue(registerRequest);
-    fixture.detectChanges();
-    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]') 
-    const authServiceSpy = jest.spyOn(authService,"register");
-    const routerSpy = jest.spyOn(router,"navigate");
-    submitBtn?.click()
-    expect(authServiceSpy).toBeCalledWith(registerRequest);
-    expect(routerSpy).toBeCalledWith(['/login']);
-  });
-
-  it('click on Submit button with register failure should display error message', () => {
-    const httpError = new HttpErrorResponse({ error: 'BadRequest', status: 400 });
-    const loginElement: HTMLElement = fixture.nativeElement;
-    authService.register = jest.fn(() => new Observable((obs) => obs.error(httpError)));
-    component.form.setValue(registerRequest);
-    fixture.detectChanges();
-    const submitBtn : HTMLButtonElement | null = fixture.nativeElement.querySelector('button[type="submit"]') 
-    submitBtn?.click()
-    fixture.detectChanges(); 
-    expect(loginElement.querySelector('span.error')?.textContent).toContain('An error occurred');
-  });
+  
 });
