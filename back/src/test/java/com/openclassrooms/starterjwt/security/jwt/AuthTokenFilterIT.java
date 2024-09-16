@@ -27,7 +27,7 @@ import com.openclassrooms.starterjwt.security.services.UserDetailsImpl;
 import com.openclassrooms.starterjwt.security.services.UserDetailsServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthTokenFilterTest {
+public class AuthTokenFilterIT {
 
     @Mock
     private JwtUtils jwtUtils;

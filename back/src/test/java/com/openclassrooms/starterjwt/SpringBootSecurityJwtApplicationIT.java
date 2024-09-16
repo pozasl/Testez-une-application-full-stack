@@ -12,7 +12,7 @@ import com.openclassrooms.starterjwt.controllers.TeacherController;
 import com.openclassrooms.starterjwt.controllers.UserController;
 
 @SpringBootTest
-public class SpringBootSecurityJwtApplicationTests {
+public class SpringBootSecurityJwtApplicationIT {
 
   @Autowired
   private AuthController authController;
