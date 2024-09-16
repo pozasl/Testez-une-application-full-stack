@@ -74,26 +74,21 @@ describe('ListComponent', () => {
       component = fixture.componentInstance;
       fixture.detectChanges();
     });
-  
-    it('should create', () => {
-      expect(component).toBeTruthy();
-    });
 
-    it("should fetch sessions at initialization", () => {
-      const allSessionSpy = jest.spyOn(sessionApiService, "all")
-      expect(allSessionSpy).toBeCalled();
+    it("Create Button should be visible", () => {
+      const createBtn = fixture.nativeElement.querySelector('button[ng-reflect-router-link="create"]');
+      expect(createBtn).not.toBeNull();
+      expect(createBtn?.textContent).toContain("Create");
     });
   
-    it('sessions should return an Observable of sessions ', (done) => {
-      component.sessions$.subscribe((sessionList) => {
-        expect(sessionList).toBe(sessions);
-        done();
-      })
-    });
-
-    it("get user should return sessionInformation", () => {
-      const allSessionSpy = jest.spyOn(sessionApiService, "all")
-      expect(component.user).toBe(mockSessionService.sessionInformation);
+    it('should display the sessions\' list with detail and edit buttons', () => {
+      const matCardItemElements: HTMLElement[] = fixture.nativeElement.querySelectorAll('mat-card.item');
+      expect(matCardItemElements.length).toBe(2);
+      expect(matCardItemElements[0].querySelector("mat-card-title")?.textContent).toContain(sessions[0].name);
+      expect(matCardItemElements[0].querySelector("mat-card-subtitle")?.textContent).toContain("Session on " + date3Str);
+      expect(matCardItemElements[0].querySelector("mat-card-subtitle")?.textContent).toContain("Session on " + date3Str);
+      expect(matCardItemElements[0].querySelector('button[ng-reflect-router-link="detail,' + sessions[0].id + '"]')?.textContent).toContain("Detail");
+      expect(matCardItemElements[0].querySelector('button[ng-reflect-router-link="update,' + sessions[0].id + '"]')?.textContent).toContain("Edit");
     });
 
   });
