@@ -55,7 +55,7 @@ public class SessionControllerTest {
     void noSessionWithId9999Exist_findById9999_shouldReturnNotFound() throws Exception {
         // GIVEN
         when(sessionService.getById(1L)).thenReturn(null);
-        mockMvc.perform(get("/api/session/1")).andExpect(status().isNotFound());
+        mockMvc.perform(get("/api/session/9999")).andExpect(status().isNotFound());
     }
 
     @Test
@@ -96,21 +96,21 @@ public class SessionControllerTest {
     }
 
     @Test
-    void sessionWithId1Exists_deleteId1_shouldReturnOk() throws Exception {
+    void sessionWithId1Exists_saveId1_shouldReturnOk() throws Exception {
         // GIVEN
         when(sessionService.getById(1L)).thenReturn(new Session());
         mockMvc.perform(delete("/api/session/1")).andExpect(status().isOk());
     }
 
     @Test
-    void NoSessionWithId9999Exist_deleteId9999_shouldReturnNotFound() throws Exception {
+    void NoSessionWithId9999Exist_saveId9999_shouldReturnNotFound() throws Exception {
         // GIVEN
         when(sessionService.getById(9999L)).thenReturn(null);
-        mockMvc.perform(delete("/api/session/1")).andExpect(status().isNotFound());
+        mockMvc.perform(delete("/api/session/9999")).andExpect(status().isNotFound());
     }
 
     @Test
-    void sessionIdString_deleteId_shouldReturnBadRequest() throws Exception {
+    void sessionIdString_saveId_shouldReturnBadRequest() throws Exception {
         // GIVEN
         mockMvc.perform(delete("/api/session/a")).andExpect(status().isBadRequest());
     }
