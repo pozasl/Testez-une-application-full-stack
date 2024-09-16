@@ -24,7 +24,7 @@ import com.openclassrooms.starterjwt.models.User;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-public class SessionRepositorySIT {
+public class SessionRepositoryIT {
     @Autowired
     SessionRepository sessionRepository;
 

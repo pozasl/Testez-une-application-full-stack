@@ -21,7 +21,7 @@ import com.openclassrooms.starterjwt.models.Teacher;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.properties")
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-public class TeacherRepositorySIT {
+public class TeacherRepositoryIT {
     @Autowired
     TeacherRepository teacherRepository;
 
