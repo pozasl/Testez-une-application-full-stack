@@ -1,6 +1,7 @@
 package com.openclassrooms.starterjwt.services;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,7 +43,7 @@ public class UserServiceTest {
         final User user = userServiceCut.findById(id);
         // THEN
         verify(userRepository).findById(id);
-        assert(user).equals(mockUser);
+        assertThat(user).isEqualTo(mockUser);
     }
 
     @Test

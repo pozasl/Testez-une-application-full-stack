@@ -1,5 +1,6 @@
 package com.openclassrooms.starterjwt.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
@@ -30,18 +31,17 @@ public class TeacherServiceTest {
     public void listOf2TeachersExist_whenFindAll_ShouldReturnA2TeachersList() {
         // GIVEN
         List<Teacher> teachersMock = List.of(
-            new Teacher(),
-            new Teacher()
-        );
+                new Teacher(),
+                new Teacher());
         when(teacherRepository.findAll()).thenReturn(teachersMock);
         // WHEN
         final List<Teacher> teachers = teacherServiceCut.findAll();
         // THEN
         verify(teacherRepository).findAll();
-        assertEquals(2,teachers.size());
-        assert(teachers).equals(teachersMock);
+        assertEquals(2, teachers.size());
+        assertThat(teachers).isEqualTo(teachersMock);
     }
-    
+
     @Test
     public void teacherWithId1Exists_whenFindById1_ShouldReturnTeacher() {
         // GIVEN
@@ -53,7 +53,7 @@ public class TeacherServiceTest {
         final Teacher teacher = teacherServiceCut.findById(id);
         // THEN
         verify(teacherRepository).findById(id);
-        assert(teacher).equals(teacherMock);
+        assertThat(teacher).isEqualTo(teacherMock);
     }
 
     @Test
