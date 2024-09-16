@@ -6,9 +6,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.openclassrooms.starterjwt.models.User;
+import com.openclassrooms.starterjwt.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,14 +20,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.openclassrooms.starterjwt.models.User;
-import com.openclassrooms.starterjwt.repository.UserRepository;
 
 @Tag("S.I.T.")
 @SpringBootTest
@@ -50,15 +47,17 @@ public class AuthControllerIT {
     @BeforeEach
     void setup() {
         date = LocalDateTime.now().minusDays(2);
-        userRepository.saveAll(List.of(
-                new User(1L, "bob@test.com", "Le Bricoleur", "Bob", passwordEncoder.encode("pass4321"), true, date,
-                        date),
-                new User(2L, "alice@test.com", "Wonderland", "Alice", passwordEncoder.encode("pass1234"), false, date,
-                        date)));
+        userRepository.saveAll(
+                List.of(
+                        new User(1L, "bob@test.com", "Le Bricoleur", "Bob", passwordEncoder.encode("pass4321"), true,
+                                date,
+                                date),
+                        new User(2L, "alice@test.com", "Wonderland", "Alice", passwordEncoder.encode("pass1234"), false,
+                                date,
+                                date)));
     }
 
     @Test
-    @WithAnonymousUser
     public void givenAdminLoginSuccess_authenticateUser_shouldReturnOkWithToken() throws Exception {
         // GIVEN
         String userEmail = "bob@test.com";
@@ -70,18 +69,17 @@ public class AuthControllerIT {
                 userPassword);
         // WHEN THEN
         mockMvc.perform(post("/api/auth/login")
-                // .with(authentication(authMock))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
-                .andExpectAll(status().isOk(),
+                .andExpectAll(
+                        status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
                         jsonPath("$.id").value(1),
                         jsonPath("$.firstName").value("Bob"),
                         jsonPath("$.lastName").value("Le Bricoleur"),
                         jsonPath("$.username").value(userEmail),
                         jsonPath("$.admin").value(true),
-                        jsonPath("$.token").isString()
-                );
+                        jsonPath("$.token").isString());
     }
 
     @Test
@@ -97,7 +95,6 @@ public class AuthControllerIT {
         //
         // WHEN THEN
         mockMvc.perform(post("/api/auth/login")
-                // .with(authentication(authMock))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
                 .andExpectAll(status().isOk(),
@@ -107,8 +104,7 @@ public class AuthControllerIT {
                         jsonPath("$.lastName").value("Wonderland"),
                         jsonPath("$.username").value(userEmail),
                         jsonPath("$.admin").value(false),
-                        jsonPath("$.token").isString()
-                );
+                        jsonPath("$.token").isString());
     }
 
     @Test
@@ -124,13 +120,11 @@ public class AuthControllerIT {
         //
         // WHEN THEN
         mockMvc.perform(post("/api/auth/login")
-                // .with(authentication(authMock))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
                 .andExpectAll(status().isUnauthorized(),
                         content().contentType(MediaType.APPLICATION_JSON),
-                        jsonPath("$.message").isString()
-                );
+                        jsonPath("$.message").isString());
     }
 
     @Test
@@ -151,10 +145,9 @@ public class AuthControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
                 .andExpectAll(
-                    status().isOk(),
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$.message").value("User registered successfully!")
-                );
+                        status().isOk(),
+                        content().contentType(MediaType.APPLICATION_JSON),
+                        jsonPath("$.message").value("User registered successfully!"));
         List<User> users = userRepository.findAll();
         // THEN
         assertThat(users).hasSize(3);
@@ -178,10 +171,9 @@ public class AuthControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
                 .andExpectAll(
-                    status().isBadRequest(),
-                    content().contentType(MediaType.APPLICATION_JSON),
-                    jsonPath("$.message").value("Error: Email is already taken!")
-                );
+                        status().isBadRequest(),
+                        content().contentType(MediaType.APPLICATION_JSON),
+                        jsonPath("$.message").value("Error: Email is already taken!"));
     }
 
 }
