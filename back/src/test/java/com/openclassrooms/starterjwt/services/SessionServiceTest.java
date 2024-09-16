@@ -1,5 +1,6 @@
 package com.openclassrooms.starterjwt.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,11 +50,9 @@ public class SessionServiceTest {
         final Session session = sessionServiceCut.create(newSession);
         // THEN
         verify(sessionRepository).save(newSession);
-        assert(session).equals(createdSession);
-
-
+        assertThat(session).isEqualTo(createdSession);
     }
-    
+
     @Test
     public void whenDeleteWithId1_repositoryShouldDeletById1() {
         // GIVEN
@@ -68,16 +67,15 @@ public class SessionServiceTest {
     public void ListOf2SessionsExists_whenFindAll_shouldReturnA2SessionsList() {
         // GIVEN
         List<Session> sessionsMock = List.of(
-            new Session(),
-            new Session()
-        );
+                new Session(),
+                new Session());
         when(sessionRepository.findAll()).thenReturn(sessionsMock);
         // WHEN
         final List<Session> sessions = sessionServiceCut.findAll();
         // THEN
         verify(sessionRepository).findAll();
         assertEquals(2, sessions.size());
-        assert(sessions).equals(sessionsMock);
+        assertThat(sessionsMock).isEqualTo(sessions);
     }
 
     @Test
@@ -91,7 +89,7 @@ public class SessionServiceTest {
         final Session session = sessionServiceCut.getById(id);
         // THEN
         verify(sessionRepository).findById(id);
-        assert(session).equals(sessionMock);
+        assertThat(sessionMock).isEqualTo(session);
     }
 
     @Test
@@ -119,7 +117,7 @@ public class SessionServiceTest {
         final Session session = sessionServiceCut.update(id, newSession);
         // THEN
         verify(sessionRepository).save(toUpdateSession);
-        assert(session).equals(updatedSession);
+        assertThat(session).isEqualTo(updatedSession);
     }
 
     @Test
@@ -152,7 +150,7 @@ public class SessionServiceTest {
         when(sessionRepository.findById(sessionId)).thenReturn(Optional.empty());
         when(userRepository.findById(userId)).thenReturn(Optional.of(user1));
         // WHEN THEN
-        assertThrows(NotFoundException.class, ()->sessionServiceCut.participate(sessionId, userId));
+        assertThrows(NotFoundException.class, () -> sessionServiceCut.participate(sessionId, userId));
     }
 
     @Test
@@ -164,7 +162,7 @@ public class SessionServiceTest {
         when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(session));
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
         // WHEN THEN
-        assertThrows(NotFoundException.class, ()->sessionServiceCut.participate(sessionId, userId));
+        assertThrows(NotFoundException.class, () -> sessionServiceCut.participate(sessionId, userId));
     }
 
     @Test
@@ -178,7 +176,7 @@ public class SessionServiceTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user1));
         when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(toUpdateSession));
         // WHEN THEN
-        assertThrows(BadRequestException.class, ()->sessionServiceCut.participate(sessionId, userId));
+        assertThrows(BadRequestException.class, () -> sessionServiceCut.participate(sessionId, userId));
     }
 
     @Test
@@ -208,7 +206,7 @@ public class SessionServiceTest {
         Long sessionId = 2L;
         when(sessionRepository.findById(sessionId)).thenReturn(Optional.empty());
         // WHEN THEN
-        assertThrows(NotFoundException.class, ()->sessionServiceCut.noLongerParticipate(sessionId, userId));
+        assertThrows(NotFoundException.class, () -> sessionServiceCut.noLongerParticipate(sessionId, userId));
     }
 
     @Test
@@ -221,7 +219,7 @@ public class SessionServiceTest {
         Session toUpdateSession = new Session().setId(sessionId).setUsers(new ArrayList<User>(sessionUsers));
         when(sessionRepository.findById(sessionId)).thenReturn(Optional.of(toUpdateSession));
         // WHEN THEN
-        assertThrows(BadRequestException.class, ()->sessionServiceCut.noLongerParticipate(sessionId, userId));
+        assertThrows(BadRequestException.class, () -> sessionServiceCut.noLongerParticipate(sessionId, userId));
     }
 
 }
