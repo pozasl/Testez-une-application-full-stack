@@ -20,7 +20,7 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.security.core.AuthenticationException;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthEntryPointJwtIT {
+public class AuthEntryPointJwtTest {
 
     @Mock
     private HttpServletRequest requestMock;
