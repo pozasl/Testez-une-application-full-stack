@@ -7,7 +7,7 @@ import { expect } from '@jest/globals';
 import { AppComponent } from './app.component';
 import { SessionService } from './services/session.service';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 
 describe('AppComponent', () => {
@@ -15,7 +15,9 @@ describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let router: Router;
   let sessionService: SessionService;
+  let subs: Subscription[];
   beforeEach(async () => {
+    subs = [];
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
@@ -33,6 +35,10 @@ describe('AppComponent', () => {
     router.navigate = jest.fn();
   });
 
+  afterEach(() => {
+    subs.forEach(sub=>sub.unsubscribe());
+  });
+
   describe(' when not logged', () => {
 
     beforeEach(async () => {
@@ -47,10 +53,10 @@ describe('AppComponent', () => {
     });
   
     it('$isLogged should return False as a boolean Observable', (done) => {
-      app.$isLogged().subscribe((logged) => {
+      subs.push(app.$isLogged().subscribe((logged) => {
         expect(logged).toBe(false);
         done();
-      })
+      }))
     });
 
     it('logout should call sessionService logout and go back to site root', () => {
@@ -73,10 +79,10 @@ describe('AppComponent', () => {
     });
 
     it('$isLogged should return True as a boolean Observable', (done) => {
-      app.$isLogged().subscribe((logged) => {
+      subs.push(app.$isLogged().subscribe((logged) => {
         expect(logged).toBe(true);
         done();
-      })
+      }))
     });
 
     it('logout should call sessionService logout and go back to site root', () => {

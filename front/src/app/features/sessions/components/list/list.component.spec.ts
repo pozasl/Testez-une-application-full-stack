@@ -7,7 +7,7 @@ import { expect } from '@jest/globals';
 import { SessionService } from 'src/app/services/session.service';
 import { ListComponent } from './list.component';
 import { SessionApiService } from '../../services/session-api.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Router, Routes } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -18,6 +18,7 @@ describe('ListComponent', () => {
   let fixture: ComponentFixture<ListComponent>;
   let sessionApiService: SessionApiService;
   let router: Router;
+  let subs: Subscription[];
 
   const date1 = new Date(2024,7,10);
   const date2 = new Date(2024,7,23);
@@ -58,6 +59,7 @@ describe('ListComponent', () => {
     };
 
     beforeEach(async () => {
+      subs = [];
       await TestBed.configureTestingModule({
         declarations: [ListComponent],
         imports: [HttpClientModule, MatCardModule, MatIconModule,
@@ -74,6 +76,10 @@ describe('ListComponent', () => {
       component = fixture.componentInstance;
       fixture.detectChanges();
     });
+
+    afterEach(() => {
+      subs.forEach(sub=>sub.unsubscribe());
+    });
   
     it('should create', () => {
       expect(component).toBeTruthy();
@@ -85,10 +91,10 @@ describe('ListComponent', () => {
     });
   
     it('sessions should return an Observable of sessions ', (done) => {
-      component.sessions$.subscribe((sessionList) => {
+      subs.push(component.sessions$.subscribe((sessionList) => {
         expect(sessionList).toBe(sessions);
         done();
-      })
+      }))
     });
 
     it("get user should return sessionInformation", () => {

@@ -4,7 +4,7 @@ import { expect } from '@jest/globals';
 
 import { SessionApiService } from './session-api.service';
 import { Session } from '../interfaces/session.interface';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 describe('SessionsService', () => {
   let service: SessionApiService;
@@ -24,6 +24,7 @@ describe('SessionsService', () => {
 });
 
 describe('SessionsService with mocked http', () => {
+  let subs: Subscription[];
   let service: SessionApiService;
   let http: HttpClient;
   const now = new Date();
@@ -49,6 +50,7 @@ describe('SessionsService with mocked http', () => {
   };
 
   beforeEach(() => {
+    subs = [];
     TestBed.configureTestingModule({
       providers:[
         { provide: HttpClient,
@@ -60,30 +62,34 @@ describe('SessionsService with mocked http', () => {
     http = TestBed.inject(HttpClient);
   });
 
+  afterEach(() => {
+    subs.forEach(sub=>sub.unsubscribe());
+  });
+
   it('all should return an observable of a session collection', (done) => {
     http.get = jest.fn(()=> new Observable<any>((obs) => obs.next([session1,session2])));
-    service.all().subscribe((sessions) => {
+    subs.push(service.all().subscribe((sessions) => {
       expect(sessions.length).toBe(2);
       expect(sessions[0]).toBe(session1);
       expect(sessions[1]).toBe(session2);
       done();
-    })
+    }))
   });
 
   it('detail should return an observable of a session', (done) => {
     http.get = jest.fn(()=> new Observable<any>((obs) => obs.next(session1)));
-    service.detail("1").subscribe((session) => {
+    subs.push(service.detail("1").subscribe((session) => {
       expect(session).toBe(session1);
       done();
-    })
+    }))
   });
 
   it('delete should return an observable of a session', (done) => {
     http.delete = jest.fn(()=> new Observable<any>((obs) => obs.next(session1)));
-    service.delete("1").subscribe((session) => {
+    subs.push(service.delete("1").subscribe((session) => {
       expect(session).toBe(session1);
       done();
-    })
+    }))
   });
 
   it('create should return an observable of a session', (done) => {
@@ -95,35 +101,33 @@ describe('SessionsService with mocked http', () => {
       users: [1,2,3],
     }) as Session;
     http.post = jest.fn(()=> new Observable<any>((obs) => obs.next(session2)));
-    service.create(newSession).subscribe((session) => {
+    subs.push(service.create(newSession).subscribe((session) => {
       expect(session).toBe(session2);
       done();
-    })
+    }))
   });
 
   it('update should return an observable of a session', (done) => {
     http.put = jest.fn(()=> new Observable<any>((obs) => obs.next(session2)));
     const userUpdated = {...session2} as Session;
-    service.update("2", userUpdated).subscribe((session) => {
+    subs.push(service.update("2", userUpdated).subscribe((session) => {
       expect(session).toBe(session2);
       done();
-    })
+    }))
   });
 
   it('participate should subscribe user to a session', (done) => {
     http.post = jest.fn(()=> new Observable<any>((obs) => obs.next()));
-    const userUpdated = {...session2} as Session;
-    service.participate("1", "2").subscribe(() => {
+    subs.push(service.participate("1", "2").subscribe(() => {
       done();
-    })
+    }))
   });
 
   it('unparticipate should unsubscribe user to a session', (done) => {
     http.delete = jest.fn(()=> new Observable<any>((obs) => obs.next()));
-    const userUpdated = {...session2} as Session;
-    service.unParticipate("1", "2").subscribe(() => {
+    subs.push(service.unParticipate("1", "2").subscribe(() => {
       done();
-    })
+    }))
   });
 
 });

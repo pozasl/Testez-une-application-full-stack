@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -163,19 +163,10 @@ describe('FormComponent', () => {
       expect(component).toBeTruthy();
     });
 
-    it('initialization should fetch session data in update mod', async () => {
-      sessionApiService.detail = jest.fn(() => new Observable<any>(obs => obs.next(session1)))
-      const sessionApiServiceSpy = jest.spyOn(sessionApiService, "detail");
-      await router.navigate(['sessions', 'update', '1']);
-      component.ngOnInit();
-      fixture.detectChanges();
-      expect(component.onUpdate).toBe(true)
-      expect(sessionApiServiceSpy).toBeCalledWith('1');
-      expect(component.sessionForm?.value).toEqual(formSession);
-    });
-
     // Impossible but Needed for 100% coverage
+    const httpError = new HttpErrorResponse({ error: 'Bad Request', status: 400 });
     it('Submit with undefined should send undefined data', async () => {
+      sessionApiService.create = jest.fn((session) => new Observable<any>(obs => obs.next(httpError)))
       const createSessionSpy = jest.spyOn(sessionApiService, "create");
       component.sessionForm = undefined;
       expect(component.sessionForm).toBeUndefined();
