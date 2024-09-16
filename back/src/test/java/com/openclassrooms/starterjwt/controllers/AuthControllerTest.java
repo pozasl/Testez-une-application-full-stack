@@ -5,6 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
@@ -87,7 +89,15 @@ public class AuthControllerTest {
                 // .with(authentication(authMock))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
-                .andExpect(status().isOk());
+                .andExpectAll(status().isOk(),
+                        content().contentType(MediaType.APPLICATION_JSON),
+                        jsonPath("$.id").value(userId),
+                        jsonPath("$.firstName").value(userFirstName),
+                        jsonPath("$.lastName").value(userLastName),
+                        jsonPath("$.username").value(userEmail),
+                        jsonPath("$.admin").value(admin),
+                        jsonPath("$.token").value("jwt")
+                );
     }
 
     @Test
@@ -117,7 +127,15 @@ public class AuthControllerTest {
                 // .with(authentication(authMock))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
-                .andExpect(status().isOk());
+                .andExpectAll(status().isOk(),
+                        content().contentType(MediaType.APPLICATION_JSON),
+                        jsonPath("$.id").value(userId),
+                        jsonPath("$.firstName").value(userFirstName),
+                        jsonPath("$.lastName").value(userLastName),
+                        jsonPath("$.username").value(userEmail),
+                        jsonPath("$.admin").value(admin),
+                        jsonPath("$.token").value("jwt")
+                );
     }
 
     @Test
@@ -147,7 +165,11 @@ public class AuthControllerTest {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
-                .andExpect(status().isOk());
+                .andExpectAll(
+                    status().isOk(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.message").value("User registered successfully!")
+                );
         // THEN
         verify(userRepository).existsByEmail(userEmail);
         verify(passwordEncoder).encode(userPassword);
@@ -173,7 +195,11 @@ public class AuthControllerTest {
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(reqBody))
-                .andExpect(status().isBadRequest());
+                .andExpectAll(
+                    status().isBadRequest(),
+                    content().contentType(MediaType.APPLICATION_JSON),
+                    jsonPath("$.message").value("Error: Email is already taken!")
+                );
         // THEN
         verify(userRepository).existsByEmail(userEmail);
     }
