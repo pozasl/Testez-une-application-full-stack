@@ -158,7 +158,6 @@ public class SessionMapperTest {
                 assertNull(entity.getUsers().get(0));
             };
 
-
             @Test
             public void sessionDtoList_toEntity_shouldConvertToSessionEntityList() {
                 // GIVEN
@@ -211,13 +210,11 @@ public class SessionMapperTest {
             @Test
             public void sessionEntityList_toDto_shouldConverToSessionDtoList() {
                 // WHEN
-                final List<SessionDto> dtos = sessionMapper.toDto(List.of (entity1,entity2));
+                final List<SessionDto> dtos = sessionMapper.toDto(List.of(entity1, entity2));
                 // THEN
                 assertEquals(List.of(dto1, dto2), dtos);
             }
 
-
         }
     }
-
 }

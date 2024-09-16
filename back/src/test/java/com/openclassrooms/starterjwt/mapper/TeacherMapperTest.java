@@ -125,5 +125,4 @@ public class TeacherMapperTest {
             assertEquals(List.of(dto1, dto2), dtos);
         }
     }
-
 }

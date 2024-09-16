@@ -128,5 +128,4 @@ public class UserMapperTest {
             assertEquals(List.of(dto1, dto2), dtos);
         }
     }
-
 }
