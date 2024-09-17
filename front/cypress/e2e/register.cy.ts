@@ -1,5 +1,7 @@
 describe('Register spec', () => {
 
+  const baseUrl = Cypress.env('API_PREFIX')
+
   it('Invalid email register', () => {
     cy.visit('/register')
 
@@ -32,7 +34,7 @@ describe('Register spec', () => {
   it('Register successfull', () => {
     cy.visit('/register')
 
-    cy.intercept('POST', '/api/auth/register', {
+    cy.intercept('POST', `${baseUrl}/api/auth/register`, {
       body: {
         message:'User registered successfully!'
       },
@@ -48,9 +50,9 @@ describe('Register spec', () => {
 
   it('Login successfull', () => {
 
-    cy.intercept('POST', '/api/auth/login', {
+    cy.intercept('POST', `${baseUrl}/api/auth/login`, {
       body: {
-        id: 1,
+        id: 4,
         username: 'test@test.com',
         firstName: 'test',
         lastName: 'TEST',
@@ -61,7 +63,7 @@ describe('Register spec', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/session',
+        url: `${baseUrl}/api/session`,
       },
       []).as('session')
 
@@ -78,14 +80,15 @@ describe('Register spec', () => {
 
   it('Register failure', () => {
     cy.visit('/register')
-    cy.intercept('POST', '/api/auth/register', {
+
+    cy.intercept('POST', `${baseUrl}/api/auth/register`, {
       body: {
         message: 'email already exists'
       },
       statusCode: 409,
     })
 
-    cy.intercept('POST', '/api/auth/register', {
+    cy.intercept('POST', `${baseUrl}/api/auth/register`, {
       body: {
         message: 'User email already exist'
       },
