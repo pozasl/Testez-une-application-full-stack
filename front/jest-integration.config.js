@@ -3,7 +3,7 @@ module.exports = {
     '@core/(.*)': '<rootDir>/src/app/core/$1',
   },
   preset: 'jest-preset-angular',
-  testMatch: ['**/?(*.)+(spec|test).ts'],
+  testMatch: ['**/?(*.)+(test).ts'],
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
   bail: false,
   verbose: false,
