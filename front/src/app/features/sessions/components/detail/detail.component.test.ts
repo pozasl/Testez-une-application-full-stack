@@ -105,24 +105,40 @@ describe('DetailComponent', () => {
       
     });
 
-    it('should create', () => {
-      expect(component).toBeTruthy();
+    it('should display the yoga session informations at initialization', () => {
+      const detailElement: HTMLElement = fixture.nativeElement;
+      expect(detailElement.querySelector('h1')?.textContent).toContain('Session 2');
+      expect(detailElement.querySelector('div.description')?.textContent).toContain(session2.description);
+      expect(detailElement.querySelector('div.created')?.textContent).toContain(dateString1);
+      expect(detailElement.querySelector('div.updated')?.textContent).toContain(dateString2);
+      expect(detailElement.textContent).toContain(dateString3);
+      expect(detailElement.textContent).toContain(session2.users.length +' attendees');
+      expect(detailElement.textContent).toContain(teacher1.firstName + ' ' + teacher1.lastName.toUpperCase());
     });
 
-    it('should fetch the yoga session datas at initialization', () => {
-      const sessionApiSpy = jest.spyOn(sessionApiService, "detail");
-      component.ngOnInit();
-      fixture.detectChanges();
+    it('Click on back button should go back in history', () => {
+      const historySpy = jest.spyOn(window.history, "back");
+      const backBtn: HTMLButtonElement | null = fixture.nativeElement.querySelector('button');
+      backBtn?.click();
+      expect(historySpy).toBeCalled();
+    });
+
+    it('Click on delete button should delete the session, notify the deletion and navigate to /sessions', () => {
+      sessionApiService.delete = jest.fn(()=> new Observable(obs=>obs.next(session2)));
+      const sessionApiSpy = jest.spyOn(sessionApiService, "delete");
+      const snackBarSpy = jest.spyOn(snackBar, "open");
+      const routerSpy = jest.spyOn(router, "navigate");
+      const deleteBtn: HTMLButtonElement = fixture.nativeElement.querySelectorAll('button')[1]
+      deleteBtn?.click();
       expect(sessionApiSpy).toBeCalledWith('2');
-      expect(component.session).toBe(session2);
-      expect(component.sessionId).toBe('2');
-      expect(component.teacher).toBe(teacher1);
-      expect(component.isParticipate).toBe(true);
+      expect(snackBarSpy).toBeCalled();
+      expect(routerSpy).toBeCalledWith(['sessions']);
     });
 
   });
 
-  describe('as user', () => {
+  describe('DetailComponent as user', () => {
+
 
     const mockSessionService = {
       sessionInformation: {
@@ -192,19 +208,41 @@ describe('DetailComponent', () => {
       
     });
 
-    it('should create', () => {
-      expect(component).toBeTruthy();
+    it('should display the yoga session informations at initialization', () => {
+      const detailElement: HTMLElement = fixture.nativeElement;
+      expect(detailElement.querySelector('h1')?.textContent).toContain('Session 3');
+      expect(detailElement.querySelector('div.description')?.textContent).toContain(session3.description);
+      expect(detailElement.querySelector('div.created')?.textContent).toContain(dateString1);
+      expect(detailElement.querySelector('div.updated')?.textContent).toContain(dateString2);
+      expect(detailElement.textContent).toContain(dateString3);
+      expect(detailElement.textContent).toContain(session3.users.length +' attendees');
+      expect(detailElement.textContent).toContain(teacher1.firstName + ' ' + teacher1.lastName.toUpperCase());
     });
 
-    it('should fetch the yoga session datas at initialization', () => {
-      const sessionApiSpy = jest.spyOn(sessionApiService, "detail");
+    it('Click on back button should go back in history', () => {
+      const historySpy = jest.spyOn(window.history, "back");
+      const backBtn: HTMLButtonElement | null = fixture.nativeElement.querySelector('button');
+      backBtn?.click();
+      expect(historySpy).toBeCalled();
+    });
+
+    it('Click on participate button should add the user to the yoga session', () => {
+      sessionApiService.participate = jest.fn(()=> new Observable(obs=>obs.next()));
+      const sessionApiSpy = jest.spyOn(sessionApiService, "participate");
+      const participateBtn: HTMLButtonElement = fixture.nativeElement.querySelectorAll('button')[1]
+      participateBtn?.click();
+      expect(sessionApiSpy).toBeCalledWith("3","5");
+    });
+
+    it('Click on participate button should remove the user from the yoga session', () => {
+      sessionApiService.detail = jest.fn(()=>new Observable((obs) => obs.next(session4)))
       component.ngOnInit();
       fixture.detectChanges();
-      expect(sessionApiSpy).toBeCalledWith('3');
-      expect(component.session).toBe(session3);
-      expect(component.sessionId).toBe('3');
-      expect(component.teacher).toBe(teacher1);
-      expect(component.isParticipate).toBe(false);
+      sessionApiService.unParticipate = jest.fn(()=> new Observable(obs=>obs.next()));
+      const sessionApiSpy = jest.spyOn(sessionApiService, "unParticipate");
+      const unparticipateBtn: HTMLButtonElement = fixture.nativeElement.querySelectorAll('button')[1]
+      unparticipateBtn?.click();
+      expect(sessionApiSpy).toBeCalledWith("3","5");
     });
 
   });

@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { expect } from '@jest/globals';
 
 import { TeacherService } from './teacher.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 describe('TeacherService', () => {
   let service: TeacherService;
@@ -41,8 +41,10 @@ describe('TeacherService with mocked http', () => {
     createdAt: now,
     updatedAt: now
   }
+  let subs:Subscription[];
 
   beforeEach(()=> {
+    subs = [];
     TestBed.configureTestingModule({
       providers:[
         { provide: HttpClient, useValue: { get: jest.fn() } },
@@ -53,22 +55,26 @@ describe('TeacherService with mocked http', () => {
 
   });
 
+  afterEach(() => {
+    subs.forEach(sub=>sub.unsubscribe());
+  });
+
   it('all should return an observable of Teacher collection', (done) => {
     http.get = jest.fn(() => new Observable<any>((obs)=> obs.next([teacher1, teacher2])));
-    service.all().subscribe((teachers)=> {
+    subs.push(service.all().subscribe((teachers)=> {
       expect(teachers.length).toBe(2);
       expect(teachers[0]).toBe(teacher1);
       expect(teachers[1]).toBe(teacher2);
       done();
-    })
+    }))
   });
 
   it('detail should return an observable of Teacher', (done) => {
     http.get = jest.fn(() => new Observable<any>((obs) => obs.next(teacher1)));
-    service.detail("1").subscribe((teacher)=> {
+    subs.push(service.detail("1").subscribe((teacher)=> {
       expect(teacher).toBe(teacher1);
       done();
-    })
+    }))
   });
 
 });

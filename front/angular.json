@@ -120,6 +120,37 @@
             "scripts": []
           }
         },
+        "test-unit": {
+          "builder": "@angular-builders/jest:run",
+          "options": {
+            "tsConfig": "tsconfig.unit.json",
+            "testMatch": [
+                "src/**/**.spec.ts"
+              ],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "test-integration": {
+          "builder": "@angular-builders/jest:run",
+          "options": {
+            "tsConfig": "tsconfig.integration.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
         "cypress-run": {
           "builder": "@cypress/schematic:cypress",
           "options": {
