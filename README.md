@@ -154,7 +154,7 @@ For the code coverage
 ```bash
 npm run test:coverage
 ```
-### End-to-end testing the whole app
+### End-to-end testing with mocked API
 
 Go to the `front` folder
 
@@ -173,6 +173,27 @@ For the code coverage run:
 ```bash
 npm run e2e:coverage
 ```
+
+### End-to-end testing the whole app (Backend + Frontend)
+
+In a 1st terminal, run the backend with a dedicated dataset:
+```bash
+cd back
+mvn -P e2e spring-boot:run
+```
+
+In a 2nd terminal, run the front-end with its default backend-proxying configuration:
+```bash
+cd front
+npm run start
+```
+
+In a 3rd terminal, run the cypress test suite:
+```bash
+cd front
+CYPRESS_API_PREFIX=nope npm run cypress:run
+```
+Code coverage isn't supported with this method.
 
 /!\ if you run the test suites one by one from the cypress window, the code coverage report will only consider the last e2e test suite ran and ignore the others.
 
