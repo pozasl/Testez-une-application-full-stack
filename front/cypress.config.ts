@@ -12,5 +12,8 @@ export default defineConfig({
       return require('./cypress/plugins/index.ts').default(on, config)
     },
     baseUrl: 'http://localhost:4200',
+    env: {
+       API_PREFIX: '' // keep '' for mocked interception
+    }
   },
 })

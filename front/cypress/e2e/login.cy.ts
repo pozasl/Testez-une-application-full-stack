@@ -1,13 +1,17 @@
 describe('Login spec', () => {
+
+  const baseUrl = Cypress.env('API_PREFIX')
+
+  console.log("==============> ", baseUrl)
   it('Login successfull', () => {
     cy.visit('/login')
 
-    cy.intercept('POST', '/api/auth/login', {
+    cy.intercept('POST', `${baseUrl}/api/auth/login`, {
       body: {
         id: 1,
-        username: 'userName',
-        firstName: 'firstName',
-        lastName: 'lastName',
+        username: 'yoga@studio.com',
+        firstName: 'Admin',
+        lastName: 'Admin',
         admin: true
       },
     })
@@ -15,14 +19,14 @@ describe('Login spec', () => {
     cy.intercept(
       {
         method: 'GET',
-        url: '/api/session',
+        url: `${baseUrl}/api/session`,
       },
       []).as('session')
 
     cy.get('input[formControlName=email]').type("yoga@studio.com")
     cy.get('input[formControlName=password]').type(`${"test!1234"}{enter}{enter}`)
 
-    cy.url().should('include', '/sessions')
+    cy.location("pathname").should("eq", "/sessions")
     cy.contains('Yoga app').should('exist')
     cy.get('span.link').contains('Sessions').should('exist')
     cy.get('span.link').contains('Account').should('exist')
@@ -40,7 +44,7 @@ describe('Login spec', () => {
   it('Login failure', () => {
     cy.visit('/login')
 
-    cy.intercept('POST', '/api/auth/login', {
+    cy.intercept('POST', `${baseUrl}/api/auth/login`, {
       body: {
         message: 'Couldn\'t authenticate'
       },
@@ -56,7 +60,7 @@ describe('Login spec', () => {
   it('Invalid email login', () => {
     cy.visit('/login')
 
-    cy.intercept('POST', '/api/auth/login', {
+    cy.intercept('POST', `${baseUrl}/api/auth/login`, {
       body: {
         message: 'Bad parameters'
       },
@@ -79,7 +83,7 @@ describe('Login spec', () => {
   it('Invalid pasword login', () => {
     cy.visit('/login')
 
-    cy.intercept('POST', '/api/auth/login', {
+    cy.intercept('POST', `${baseUrl}/api/auth/login`, {
       body: {
         message: 'Bad parameters'
       },
