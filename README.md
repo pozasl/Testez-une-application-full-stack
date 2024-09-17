@@ -3,7 +3,7 @@
 # Yoga-App
 
 This project contains the Yoga-app backend and frontend.
-This application provide
+This application provide Yoga lesson organized in sessions whose registered users can participate.
 
 ## Technologies
 - TS 14
