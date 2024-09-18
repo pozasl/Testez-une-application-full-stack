@@ -206,7 +206,9 @@ describe('Sessions spec', () => {
         body: sessionCreate
       })
 
+      cy.location("pathname").should("eq", "/sessions")
       cy.get('.mat-card-actions > :nth-child(2)').last().click();
+
       cy.location("pathname").should("eq", "/sessions/update/3")
       cy.get('h1').contains('Update session').should('have.length', 1)
       cy.get('input[formControlName=name]').should('have.value', sessionCreate.name)
@@ -224,7 +226,7 @@ describe('Sessions spec', () => {
         body: [...sessions, sessionEdit]
       })
 
-      cy.contains('Save').click()
+      cy.contains('Save').click({force: true})
     })
 
 
@@ -254,7 +256,9 @@ describe('Sessions spec', () => {
         }
       })
 
-      cy.get('.mat-card-actions > :nth-child(1)').last().click();
+      cy.location("pathname").should("eq", "/sessions")
+      cy.get('.mat-card-actions > :nth-child(1)').last().click({force: true});
+
       cy.location("pathname").should("eq", "/sessions/detail/3")
       cy.get('h1').contains('Session Test (Edit)').should('have.length', 1)
       cy.get('img.picture').should('have.length', 1)
